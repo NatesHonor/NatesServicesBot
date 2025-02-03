@@ -11,26 +11,24 @@ const casualResponses = [
   "Hi! What can I do for you today?",
 ];
 
-// Temporary state tracking (in-memory)
 const userState = {};
-const userRatings = {}; // Track ratings for users
+const userRatings = {};
 
 async function handleChatSupport(message) {
   const query = message.content.toLowerCase().trim();
-  console.log("User Query:", query); // Debugging: Log user query
+  console.log("User Query:", query);
 
-  // Check if the user is in a follow-up state
   const state = userState[message.author.id];
   if (state && state.stage === 'setupQuestion') {
     if (query.includes('command line')) {
       sendCommandLineGuide(message);
-      await sendReactionEmbed(message);  // After answering follow-up, send the reaction embed
-      delete userState[message.author.id]; // Reset state after handling
+      await sendReactionEmbed(message);
+      delete userState[message.author.id];
       return;
     } else if (query.includes('exe')) {
       sendExeGuide(message);
-      await sendReactionEmbed(message);  // After answering follow-up, send the reaction embed
-      delete userState[message.author.id]; // Reset state after handling
+      await sendReactionEmbed(message);
+      delete userState[message.author.id];
       return;
     } else {
       message.channel.send("Please specify if you're using the Command Line or the exe.");
@@ -38,19 +36,15 @@ async function handleChatSupport(message) {
     }
   }
 
-  // Check similarity with FAQ responses
   const bestMatch = Object.keys(faqResponses).find(q => query.includes(q));
 
   if (bestMatch) {
     const response = faqResponses[bestMatch];
     message.channel.send(response);
-
-    // Update state for follow-up
     if (bestMatch === "why is my missionchief bot not working") {
       userState[message.author.id] = { stage: 'setupQuestion' };
     }
   } else {
-    // Handle casual greetings if no FAQ match
     const casualMatch = casualResponses.some(response => query.includes(response.toLowerCase()));
     if (casualMatch) {
       const randomResponse = casualResponses[Math.floor(Math.random() * casualResponses.length)];
@@ -106,12 +100,9 @@ async function sendReactionEmbed(message) {
     .setFooter({ text: "You have 5 minutes to react!" });
 
   const sentMessage = await message.channel.send({ embeds: [embed] });
-
-  // Add the ✅ and ❌ reactions to the embed
   await sentMessage.react('✅');
   await sentMessage.react('❌');
 
-  // Set up a reaction collector that listens for ✅ and ❌ from the user
   const filter = (reaction, user) => (reaction.emoji.name === '✅' || reaction.emoji.name === '❌') && user.id === message.author.id;
   const collector = sentMessage.createReactionCollector({ filter, time: 5 * 60 * 1000 });
 
@@ -125,41 +116,7 @@ async function sendReactionEmbed(message) {
             .setColor("#00AAFF")
         ]
       });
-
-      const ratingFilter = (responseMessage) => responseMessage.author.id === message.author.id && /^[1-5]$/.test(responseMessage.content);
-      const ratingCollector = message.channel.createMessageCollector({ filter: ratingFilter, time: 60 * 1000 });
-
-      ratingCollector.on('collect', async (ratingMessage) => {
-        const rating = ratingMessage.content;
-        await ratingMessage.delete(); // Remove the rating message from the chat
-
-        await sentMessage.edit({
-          embeds: [
-            new EmbedBuilder()
-              .setTitle("Thanks for Your Feedback!")
-              .setDescription(`You rated the response: ${rating}/5`)
-              .setColor("#00AAFF")
-          ]
-        });
-
-        ratingCollector.stop();
-      });
-
-      ratingCollector.on('end', async () => {
-        // If the rating collection times out, do nothing further
-        if (!userRatings[message.author.id]) {
-          await sentMessage.edit({
-            embeds: [
-              new EmbedBuilder()
-                .setTitle("Feedback Expired")
-                .setDescription("You did not provide a rating in time. Please try again later.")
-                .setColor("#FF0000")
-            ]
-          });
-        }
-      });
     }
-    // If ❌ is pressed, just end the reaction and do nothing more
     if (reaction.emoji.name === '❌') {
       await sentMessage.edit({
         embeds: [
@@ -170,18 +127,6 @@ async function sendReactionEmbed(message) {
         ]
       });
     }
-  });
-
-  collector.on('end', async () => {
-    // If no reaction is received within 5 minutes, time out
-    await sentMessage.edit({
-      embeds: [
-        new EmbedBuilder()
-          .setTitle("Reaction Expired")
-          .setDescription("The reaction has expired. Please try again later.")
-          .setColor("#FF0000")
-      ]
-    });
   });
 }
 
