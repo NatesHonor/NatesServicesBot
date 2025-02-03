@@ -10,7 +10,7 @@ const { handleMissionchiefBotSupport } = require('./functions/SupportReasons/Mis
 const { sendMissionchiefBugReportMessage } = require('./functions/SupportReasons/MissionchiefBotReasons/BugReports');
 const { sendMissionchiefSuggestionMessage } = require('./functions/SupportReasons/MissionchiefBotReasons/Suggestions')
 const { handleApplication } = require('./functions/HandleApplication');
-const { handleChatSupport } = require('./functions/chatsupport');
+const { handleChatSupport } = require('./functions/ChatSupport');
 
 const { Client, Collection, GatewayIntentBits } = require('discord.js');
 const onReady = require('./events/Ready');
