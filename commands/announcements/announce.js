@@ -3,7 +3,7 @@ const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('announce')
-    .setDescription('Announce to everyone or staff')
+    .setDescription('Send an announcement message')
     .addSubcommand(subcommand =>
       subcommand
         .setName('everyone')
@@ -53,6 +53,12 @@ module.exports = {
         .addStringOption(option =>
             option.setName('more_plain_content').setDescription('Plain content under more bolded content').setRequired(false))
         .addStringOption(option =>
+            option.setName('more_bold_content2').setDescription('More bolded content').setRequired(false))
+        .addStringOption(option =>
+            option.setName('more_plain_content2').setDescription('Plain content under more bolded content').setRequired(false))
+            
+            
+        .addStringOption(option =>
             option.setName('link').setDescription('Optional link').setRequired(false))
     ),
     async execute(interaction) {
@@ -68,6 +74,9 @@ module.exports = {
     const plainContent = interaction.options.getString('plain_content');
     const moreBoldContent = interaction.options.getString('more_bold_content') || '';
     const morePlainContent = interaction.options.getString('more_plain_content') || '';
+    const moreBoldContent2 = interaction.options.getString('more_bold_content2') || '';
+    const morePlainContent2 = interaction.options.getString('more_plain_content2') || '';
+    
     const link = interaction.options.getString('link') || '';
 
     let role;
@@ -83,12 +92,18 @@ module.exports = {
         .setDescription(`**${boldContent}**\n${plainContent}`)
         .setColor(0x0099FF)
         .setTimestamp();
-    if (moreBoldContent || morePlainContent) {
+    if (moreBoldContent && morePlainContent) {
         embed.addFields(
         { name: '\u200B', value: '\u200B' },
         { name: moreBoldContent, value: morePlainContent, inline: true }
         );
     }
+    if (moreBoldContent2 && morePlainContent2) {
+      embed.addFields(
+      { name: '\u200B', value: '\u200B' },
+      { name: moreBoldContent2, value: morePlainContent2, inline: true }
+      );
+  }
     if (link) {
         embed.setTitle(serviceName)
              .setURL(link);
