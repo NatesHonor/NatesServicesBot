@@ -10,6 +10,8 @@ const { handleMissionchiefBotSupport } = require('./functions/SupportReasons/Mis
 const { sendMissionchiefBugReportMessage } = require('./functions/SupportReasons/MissionchiefBotReasons/BugReports');
 const { sendMissionchiefSuggestionMessage } = require('./functions/SupportReasons/MissionchiefBotReasons/Suggestions')
 const { handleApplication } = require('./functions/HandleApplication');
+const { handleChatSupport } = require('./functions/chatsupport');
+
 const { Client, Collection, GatewayIntentBits } = require('discord.js');
 const onReady = require('./events/Ready');
 const path = require('path');
@@ -44,30 +46,26 @@ loadCommands(client);
 client.once('ready', () => onReady(client));
 client.once('ready', async () => {
   console.log(`Logged in as ${client.user.tag}!`);
-  if (config.staffMessageId) {
+  if (config.staffMessageId && config.positionsMessageId) {
     try {
-      const channel = await client.channels.fetch('1210181953316331530');
+      const channel = await client.channels.fetch('1317219202154631277');
       const message = await channel.messages.fetch(config.staffMessageId);
       const embed = createStaffEmbed();
       await message.edit({ embeds: [embed] });
+      const message1 = await channel.messages.fetch(config.positionsMessageId);
+      const embed1 = createPositionEmbed();
+      await message1.edit({ embeds: [embed1] });
     } catch (error) {
-      console.error('Failed to edit the staff message:', error);
-    }
-  }
-  if (config.positionsMessageId) {
-    try {
-      const channel = await client.channels.fetch('1216197790414143620');
-      const message = await channel.messages.fetch(config.positionsMessageId);
-      const embed = createPositionEmbed();
-      await message.edit({ embeds: [embed] });
-    } catch (error) {
-      console.error('Failed to edit the positions message:', error);
+      console.error('Failed to edit the staff and positions message:', error);
     }
   }
 });
 
 client.on('messageCreate', async message => {
   if (message.author.bot) return;
+  if (message.channel.id === '1317222018302607461' || message.channel.id === '1210368843470475325') {
+    handleChatSupport(message);
+  }
   if (message.channel.name.startsWith('ticket-')) {
     const ticketId = message.channel.name.split('-')[1];
     const filePath = path.join(__dirname, `./data/tickets/ticket-${ticketId}.txt`);
@@ -141,4 +139,3 @@ const voiceStateUpdate = require('./events/VoiceStatusUpdate');
 const { createPositionEmbed } = require('./functions/PositionEmbed');
 createTables();
 voiceStateUpdate(client);
-
