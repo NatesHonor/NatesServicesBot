@@ -12,7 +12,9 @@
   "license": "ISC",
   "dependencies": {
     "@discordjs/builders": "^1.6.3",
+    "@pinecone-database/pinecone": "^4.0.0",
     "bot": "file:",
+    "chromadb": "^1.9.2",
     "crypto": "^1.0.1",
     "date-fns": "^3.6.0",
     "discord-buttons": "^4.0.0-deprecated",
@@ -21,8 +23,10 @@
     "discord.js-commando": "github:discordjs/Commando",
     "dotenv": "^16.4.5",
     "express": "^4.21.0",
+    "langchain": "^0.3.6",
     "mysql2": "^3.11.0",
     "nodemon": "^3.1.4",
+    "string-similarity": "^4.0.4",
     "uuid": "^9.0.0"
   }
 }
