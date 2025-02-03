@@ -27,7 +27,6 @@ for (const folder of commandFolders) {
   }
 }
 
-// The rest of your deployment script remains the same
 
 
 const rest = new REST({ version: '10' }).setToken(token);
