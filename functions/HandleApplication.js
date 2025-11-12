@@ -4,18 +4,20 @@ async function handleApplication(buttonInteraction) {
     if (!buttonInteraction.deferred && !buttonInteraction.replied) {
         await buttonInteraction.deferReply({ ephemeral: true });
     }
-    const applicationCategoryId = '1216207599918121150';
+    const applicationCategoryId = '1399446894920335381';
     const applicationCategory = await buttonInteraction.guild.channels.fetch(applicationCategoryId);
     const buttonClickerId = buttonInteraction.user.id;
 
     try {
       const existingChannels = await buttonInteraction.guild.channels.fetch();
-      const existingChannel = existingChannels.find(
-          (channel) =>
-              channel.type === 'GUILD_TEXT' &&
-              channel.parentId === applicationCategory.id &&
-              channel.name.toLowerCase() === `${buttonInteraction.user.username}s-application`.toLowerCase()
-      );
+
+        const existingChannel = existingChannels.find(
+        (channel) =>
+            channel.type === ChannelType.GuildText &&
+            channel.parentId === applicationCategory.id &&
+            channel.name.toLowerCase() === `${buttonInteraction.user.username}s-application`.toLowerCase()
+        );
+
       
       if (existingChannel) {
           await buttonInteraction.editReply({ content: 'You already have an application channel!', components: [] });
@@ -67,7 +69,7 @@ async function handleApplication(buttonInteraction) {
                         },
                     ]),
             );
-
+        await ticketChannel.setTopic(`UserID: ${user.id}`)
         await ticketChannel.send({ content: `${user}`, embeds: [embed], components: [row] });
         await buttonInteraction.editReply({ content: 'Your application has been created!', components: [] });
     } catch (channelError) {

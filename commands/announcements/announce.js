@@ -108,7 +108,7 @@ module.exports = {
         embed.setTitle(serviceName)
              .setURL(link);
     }
-    embed.setFooter({ text: 'All my work is free and any donations are appreciated', iconURL: 'https://cdn.discordapp.com/icons/1056352524254322688/3088ec0790f7a66894a76ba7b1f66dde.webp?size=96' });
+    embed.setFooter({ text: 'All my work is free and any donations are appreciated', iconURL: 'https://cdn.discordapp.com/avatars/1119080731939966986/6a891acc09a56151dcfe09cd4c14fa2a.webp?size=40' });
     await interaction.channel.send({ content: role, allowedMentions: { parse: ['roles'] } });
     await interaction.channel.send({ embeds: [embed] });
     await interaction.reply({ content: 'Announcement sent!', ephemeral: true });

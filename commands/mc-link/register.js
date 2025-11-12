@@ -1,20 +1,7 @@
 const { SlashCommandBuilder } = require('discord.js');
-const mysql = require('mysql2');
+const pool = require('../../data/MySQL/database');
 const config = require('../../config.json');
 
-const connection = mysql.createConnection({
-  host: config.host,
-  user: config.username,
-  password: config.password,
-  database: config.database,
-});
-
-connection.connect((err) => {
-  if (err) {
-    console.error('Error connecting to MySQL database:', err);
-  } else {
-  }
-});
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -40,7 +27,7 @@ module.exports = {
     const userId = interaction.user.id;
 
     const checkSql = 'SELECT * FROM logins WHERE uuid = ?';
-    connection.query(checkSql, [userId], (err, result) => {
+    pool.query(checkSql, [userId], (err, result) => {
       if (err) {
         console.error('Error querying database:', err);
         return interaction.reply('An error occurred while checking your account link. Please try again later.');
@@ -51,7 +38,7 @@ module.exports = {
       }
 
       const sql = 'INSERT INTO logins (uuid, email, password) VALUES (?, ?, ?)';
-      connection.query(sql, [userId, email, password], (err, result) => {
+      pool.query(sql, [userId, email, password], (err, result) => {
         if (err) {
           console.error('Error storing login information in the database:', err);
           return interaction.reply('An error occurred while registering your email and password. Please try again later.');

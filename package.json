@@ -26,6 +26,9 @@
     "langchain": "^0.3.6",
     "mysql2": "^3.11.0",
     "nodemon": "^3.1.4",
+    "pdfkit": "^0.17.1",
+    "stream-buffers": "^3.0.3",
+    "streambuffers": "^1.0.1",
     "string-similarity": "^4.0.4",
     "uuid": "^9.0.0"
   }

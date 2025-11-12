@@ -1,21 +1,7 @@
 const { SlashCommandBuilder } = require('discord.js');
-const mysql = require('mysql2');
-const config = require('../../config.json');
+const pool = require('../../data/MySQL/database');
 const { EmbedBuilder } = require('discord.js');
 
-const connection = mysql.createConnection({
-  host: config.host,
-  user: config.username,
-  password: config.password,
-  database: config.database,
-});
-
-connection.connect((err) => {
-  if (err) {
-    console.error('Error connecting to MySQL database:', err);
-  } else {
-  }
-});
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -25,7 +11,7 @@ module.exports = {
     const discordUserId = interaction.user.id;
 
     const sql = 'DELETE FROM account_links WHERE discord_user_id = ?';
-    connection.query(sql, [discordUserId], (err, result) => {
+    pool.query(sql, [discordUserId], (err, result) => {
       if (err) {
         console.error('Error querying database:', err);
         return interaction.reply('An error occurred while unlinking your account. Please try again later.');

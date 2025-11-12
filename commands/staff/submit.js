@@ -7,41 +7,44 @@ module.exports = {
 
     async execute(interaction) {
         const channel = interaction.channel;
-        const channelNameMatch = channel.name.match(/^(.+?)-application$/); 
-        if (channelNameMatch) {
-            let userName = channelNameMatch[1];
-            if (userName.endsWith('s')) {
-                userName = userName.slice(0, -1);
-            }
+        const member = interaction.member;
+        const applicantRoleId = '1294351092213219461';
+        const pingRoleId = '1399446443063902348';
 
-            await channel.send(`Okay! Submitting your application, ${userName}.`);
-            for (let i = 5; i >= 1; i--) {
-                await channel.send(`Countdown: ${i} seconds...`);
-                await new Promise(resolve => setTimeout(resolve, 1000));
-            }
-            const user = await interaction.guild.members.fetch({ query: userName, limit: 1 });
-            const roleId = '1216205298579144794';
-            const role = interaction.guild.roles.cache.get(roleId);
-            if (role) {
-                await channel.send(`Attention ${role}, ${userName}'s application has been submitted!`);
-            } else {
-                console.error(`Role with ID ${roleId} not found.`);
-            }
-            if (user.size > 0) {
-                const roleId = '1216205509112365206';
-                const role = interaction.guild.roles.cache.get(roleId);
-
-                if (role) {
-                    const member = user.first();
-                    await member.roles.add(role);
-                    await channel.permissionOverwrites.create(member.id, { VIEW_CHANNEL: false });
-                } 
-                await interaction.channel.permissionOverwrites.edit(interaction.user.id, {
-                    [PermissionsBitField.Flags.ViewChannel]: false
-                  });
-            }
-        } else {
-            await interaction.reply("This command is only applicable in application channels.");
+        if (!channel.name.endsWith('-application')) {
+            return await interaction.reply({
+                content: 'This command can only be used in application ticket channels.',
+                ephemeral: true
+            });
         }
+
+        await channel.send(`Okay! Submitting your application, ${member.displayName} in...`);
+        for (let i = 5; i >= 1; i--) {
+            await channel.send(`${i}...`);
+            await new Promise(resolve => setTimeout(resolve, 1000));
+        }
+
+        const pingRole = interaction.guild.roles.cache.get(pingRoleId);
+        if (pingRole) {
+            await channel.send(`Attention ${pingRole}, ${member.displayName}'s application has been submitted!`);
+        }
+
+        const applicantRole = interaction.guild.roles.cache.get(applicantRoleId);
+        if (applicantRole) {
+            await member.roles.add(applicantRole);
+            await channel.send(`${member} has been given the Applicant role.`);
+        }
+
+        await channel.permissionOverwrites.edit(member.id, {
+            [PermissionsBitField.Flags.ViewChannel]: false
+        });
+
+        if (interaction.user.id !== member.id) {
+            await channel.permissionOverwrites.edit(interaction.user.id, {
+                [PermissionsBitField.Flags.ViewChannel]: false
+            });
+        }
+
+        await interaction.reply({ content: 'Application submitted!', ephemeral: true });
     },
 };

@@ -1,20 +1,7 @@
 const { SlashCommandBuilder } = require('discord.js');
-const mysql = require('mysql2');
 const config = require('../../config.json');
+const pool = require('../../data/MySQL/database');
 
-const connection = mysql.createConnection({
-  host: config.host,
-  user: config.username,
-  password: config.password,
-  database: config.database,
-});
-
-connection.connect((err) => {
-  if (err) {
-    console.error('Error connecting to MySQL database:', err);
-  } else {
-  }
-});
 
 function generateUniqueToken() {
   const tokenLength = 10;
@@ -89,7 +76,7 @@ module.exports = {
 
     function insertReport(reportKey) {
       const sql = 'INSERT INTO reports (report_key, reporter_id, platform, user, reason, evidence, claimed) VALUES (?, ?, ?, ?, ?, ?, ?)';
-      connection.query(sql, [reportKey, reporterId, platformName, user, reason, evidence, false], (err, result) => {
+      pool.query(sql, [reportKey, reporterId, platformName, user, reason, evidence, false], (err, result) => {
         if (err) {
           console.error('Error storing the report in the database:', err);
           return interaction.reply('An error occurred while submitting the report. Please try again later.');
@@ -120,7 +107,7 @@ module.exports = {
     function generateAndCheckToken() {
       const reportToken = generateUniqueToken();
       const checkTokenQuery = 'SELECT COUNT(*) as count FROM reports WHERE report_key = ?';
-      connection.query(checkTokenQuery, [reportToken], (err, rows) => {
+      pool.query(checkTokenQuery, [reportToken], (err, rows) => {
         if (err) {
           console.error('Error checking token in the database:', err);
           return interaction.reply('An error occurred while submitting the report. Please try again later.');

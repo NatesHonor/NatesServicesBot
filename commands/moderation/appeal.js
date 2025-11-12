@@ -1,20 +1,6 @@
 const { ActionRowBuilder, ButtonBuilder, ButtonStyle, SlashCommandBuilder, ChannelType, EmbedBuilder } = require('discord.js');
-const mysql = require('mysql2');
-const crypto = require('crypto');
-const config = require('../../config.json');
+const pool = require('../../data/MySQL/database');
 
-const connection = mysql.createConnection({
-  host: config.host,
-  user: config.username,
-  password: config.password,
-  database: config.database,
-});
-
-connection.connect((err) => {
-  if (err) {
-    console.error('Error connecting to MySQL database:', err);
-  }
-});
 
 module.exports = {
   data: new SlashCommandBuilder()
