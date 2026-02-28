@@ -50,6 +50,7 @@ const {
 } = require('./functions/ChatSupport');
 
 const onReady = require('./events/Ready');
+const { listener } = require('./events/listener');
 const voiceStateUpdate = require('./events/VoiceStatusUpdate');
 const createTables = require('./data/MySQL/create-tables');
 const pool = require('./data/MySQL/database');
@@ -86,10 +87,9 @@ client.once('ready', () => onReady(client));
 
 client.once('ready', async () => {
   console.log(`Logged in as ${client.user.tag}!`);
-
   if (config.staffMessageId && config.positionsMessageId) {
     try {
-      const channel = await client.channels.fetch('1317219202154631277');
+      const channel = await client.channels.fetch('1272685852748677222');
       const message = await channel.messages.fetch(config.staffMessageId);
       const embed = createStaffEmbed();
       await message.edit({ embeds: [embed] });
@@ -101,6 +101,7 @@ client.once('ready', async () => {
       console.error('Failed to edit the staff and positions message:', error);
     }
   }
+  listener(client)
 });
 
 client.on('messageCreate', async (message) => {

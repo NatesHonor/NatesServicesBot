@@ -13,6 +13,7 @@
   "dependencies": {
     "@discordjs/builders": "^1.6.3",
     "@pinecone-database/pinecone": "^4.0.0",
+    "better-sqlite3": "^12.6.2",
     "bot": "file:",
     "chromadb": "^1.9.2",
     "crypto": "^1.0.1",

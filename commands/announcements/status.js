@@ -16,7 +16,7 @@ async function fetchIncidentById(incidentId) {
     
     if (response.ok) {
       if (data && data.data) {
-        console.log(`Fetched incident ${incidentId}:`, data);
+        console.log(`Fetched incident ${incidentId}`);
         const monitor = data.included.find(item => item.type === 'monitor');
         const monitorName = monitor ? monitor.attributes.pronounceable_name : 'Unknown Monitor';
         return {
@@ -125,9 +125,13 @@ async function fetchAndCreateEmbed(addFooter = false) {
       embed.addFields({ name: '\u200B', value: '\u200B' });
     }
 
-    if (downMonitors.length == 0) {
-      embed.addFields({ name: 'No services are currently down =)' });
-    }
+    if (downMonitors.length === 0) {
+      embed.addFields({
+        name: '✅ All Systems Operational',
+        value: 'No services are currently down.',
+        inline: false
+      });
+    } 
 
     return embed;
   } catch (error) {
