@@ -45,9 +45,7 @@ const {
 const {
   handleApplication,
 } = require('./functions/HandleApplication');
-const {
-  handleChatSupport,
-} = require('./functions/ChatSupport');
+
 
 const onReady = require('./events/Ready');
 const { listener } = require('./events/listener');
@@ -104,28 +102,6 @@ client.once('ready', async () => {
   listener(client)
 });
 
-client.on('messageCreate', async (message) => {
-  if (message.author.bot) return;
-
-  if (
-    message.channel.id === '1317222018302607461' ||
-    message.channel.id === '1210368843470475325'
-  ) {
-    handleChatSupport(message);
-  }
-
-  if (message.channel.name.startsWith('ticket-')) {
-    const ticketId = message.channel.name.split('-')[1];
-    const filePath = path.join(__dirname, `./data/tickets/ticket-${ticketId}.txt`);
-    const messageContent = `[${message.createdAt.toISOString()}] ${message.author.tag}: ${message.content}\n`;
-
-    fs.appendFile(filePath, messageContent, (err) => {
-      if (err) {
-        console.error('Error saving message to file:', err);
-      }
-    });
-  }
-});
 
 client.on('interactionCreate', async (interaction) => {
   if (interaction.isCommand()) {
@@ -161,7 +137,6 @@ client.on('interactionCreate', async (interaction) => {
     }
 
     if (interaction.customId === 'select_specific_reason') {
-      // Empty, no actions defined
     }
   }
 
